@@ -1,0 +1,6 @@
+env
+*/__pycache__
+
+# Don't track extranius files for now
+*.py
+assets
