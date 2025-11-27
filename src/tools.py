@@ -1,7 +1,6 @@
 import customtkinter
 from PIL import Image
-from orginizer import OrganizerWindow
-
+from orginizer.organize_frame import OrganizerWindow
 
 class ToolsCell(customtkinter.CTkFrame):
     def __init__(self, master, filename, value, subValue, command):
@@ -9,9 +8,6 @@ class ToolsCell(customtkinter.CTkFrame):
             master,
             corner_radius=10,
         )
-
-        def command(val):
-            print("clicked", val)
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure((0, 1, 2), weight=1)
@@ -134,8 +130,11 @@ class ToolsFrame(customtkinter.CTkFrame):
             self.open_fileorganizer,
         )
         self.settingsCell.grid(row=1, column=2, padx=5, pady=5, sticky="news")
+        
+        # popups
+        self.fileorganizer = None
 
-    def open_fileorganizer(self):
+    def open_fileorganizer(self, ev):
         if self.fileorganizer is None or not self.fileorganizer.winfo_exists():
             self.fileorganizer = OrganizerWindow(self.window)
         else:
