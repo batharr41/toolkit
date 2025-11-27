@@ -1,6 +1,6 @@
 import customtkinter
 import logic.stats as stats
-
+import threading
 
 class SnapshotsCell(customtkinter.CTkFrame):
     def __init__(self, master, title, value, subValue):
@@ -81,19 +81,43 @@ class SnapshotsFrame(customtkinter.CTkFrame):
         self.networkCell = SnapshotsCell(self.frame, "Network", "12 Mbps", "Free")
         self.networkCell.grid(row=0, column=3, padx=5, sticky="news")
         
-        self.updateStats()
+    def _fetch_stats_in_thread(self, window):
+        def worker():
+            try:
+                data = stats.get_system_metrics()
+            except Exception as e:
+                print(f"Error fetching stats: {e}")
+                data = None
+            if data:
+                window.after(0, lambda: self._update_gui_and_schedule_next(data, window))
+            else:
+                window.after(0, lambda: self._schedule_next_update(window))
 
-    def updateStats(self):
-        data = stats.get_system_metrics()
+        t = threading.Thread(target=worker)
+        t.daemon = True
+        t.start()
+    
+    def _update_gui_and_schedule_next(self, data, window):
+        """Updates the GUI with the fetched data and schedules the next update."""
+        self.updateStats(data) 
+        self._schedule_next_update(window)
+
+    
+    def _schedule_next_update(self, window):
+        """Schedules the next call to fetch stats in a thread."""
+        window.after(1000, lambda: self._fetch_stats_in_thread(window))
+
+
+    
+    def updateStats(self, data):
+        """Updates the GUI elements using the pre-fetched data."""
         self.cpuCell.update(data.get("cpu_used"), data.get("cpu_temp"))
         self.ramCell.update(data.get("ram_used"), data.get("ram_gb"))
         self.diskCell.update(data.get("disk_used"), data.get("disk_gb"))
+        
         self.networkCell.update(data.get("network_speed"), data.get("Free"))
 
+    
     def sheduleUpdates(self, window: customtkinter.CTk):
-
-        def runUpdate():
-            self.updateStats()
-            self.sheduleUpdates(window)
-
-        window.after(2500, runUpdate)
+        """Starts the periodic, non-blocking stats update process."""
+        self._fetch_stats_in_thread(window)

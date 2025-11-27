@@ -1,12 +1,17 @@
 import customtkinter
 from PIL import Image
+from orginizer import OrganizerWindow
+
 
 class ToolsCell(customtkinter.CTkFrame):
-    def __init__(self, master, filename, value, subValue):
+    def __init__(self, master, filename, value, subValue, command):
         super().__init__(
             master,
             corner_radius=10,
         )
+
+        def command(val):
+            print("clicked", val)
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure((0, 1, 2), weight=1)
@@ -22,31 +27,41 @@ class ToolsCell(customtkinter.CTkFrame):
             image=logo,
         )
         self.logo.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="ew")
+        self.logo.bind("<Button-1>", command)
 
         # value
-        self.title = customtkinter.CTkLabel(
+        self.value = customtkinter.CTkLabel(
             self,
             text=value,
             font=("Helvetica", 20),
         )
-        self.title.grid(row=1, column=0, padx=10, pady=(20, 0), sticky="we")
+        self.value.grid(row=1, column=0, padx=10, pady=(20, 0), sticky="we")
+        self.value.bind("<Button-1>", command)
 
         # title
-        self.title = customtkinter.CTkLabel(
+        self.subvalue = customtkinter.CTkLabel(
             self,
             text=subValue,
             font=("Helvetica", 16),
             text_color="gray50",
         )
-        self.title.grid(row=2, column=0, padx=10, pady=(5, 5), sticky="we")
+        self.subvalue.grid(row=2, column=0, padx=10, pady=(5, 5), sticky="we")
+        self.subvalue.bind("<Button-1>", command)
+
+        self.bind("<Button-1>", command)
 
 
 class ToolsFrame(customtkinter.CTkFrame):
-    def __init__(self, master):
+
+    window: customtkinter.CTk
+    fileorganizer: customtkinter.CTkToplevel
+
+    def __init__(self, window):
         super().__init__(
-            master,
+            window,
             fg_color="transparent",
         )
+        self.window = window
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=0)
         self.grid_rowconfigure(1, weight=1)
@@ -66,20 +81,62 @@ class ToolsFrame(customtkinter.CTkFrame):
         self.frame.grid_rowconfigure((0, 1), weight=1)
 
         # cells
-        self.orgnizerCell = ToolsCell(self.frame, "file.png", "File Organizer", "Organize folders")
+        self.orgnizerCell = ToolsCell(
+            self.frame,
+            "file.png",
+            "File Organizer",
+            "Organize folders",
+            self.open_fileorganizer,
+        )
         self.orgnizerCell.grid(row=0, column=0, padx=5, pady=5, sticky="news")
 
-        self.cleanerCell = ToolsCell(self.frame, "cleaner.png", "Cleaner", "Clear temp/cache")
+        self.cleanerCell = ToolsCell(
+            self.frame,
+            "cleaner.png",
+            "Cleaner",
+            "Clear temp/cache",
+            self.open_fileorganizer,
+        )
         self.cleanerCell.grid(row=0, column=1, padx=5, pady=5, sticky="news")
 
-        self.monitorCell = ToolsCell(self.frame, "monitor.png", "System Monitor", "CPU,RAM,processes")
+        self.monitorCell = ToolsCell(
+            self.frame,
+            "monitor.png",
+            "System Monitor",
+            "CPU,RAM,processes",
+            self.open_fileorganizer,
+        )
         self.monitorCell.grid(row=0, column=2, padx=5, pady=5, sticky="news")
 
-        self.vaultCell = ToolsCell(self.frame, "vault.png", "Vault", "Store files safely")
+        self.vaultCell = ToolsCell(
+            self.frame,
+            "vault.png",
+            "Vault",
+            "Store files safely",
+            self.open_fileorganizer,
+        )
         self.vaultCell.grid(row=1, column=0, padx=5, pady=5, sticky="news")
 
-        self.statsCell = ToolsCell(self.frame, "stats.png", "Stats Center", "Network,weather,etc")
+        self.statsCell = ToolsCell(
+            self.frame,
+            "stats.png",
+            "Stats Center",
+            "Network,weather,etc",
+            self.open_fileorganizer,
+        )
         self.statsCell.grid(row=1, column=1, padx=5, pady=5, sticky="news")
 
-        self.settingsCell = ToolsCell(self.frame, "settings2.png", "Settings", "Preferences")
+        self.settingsCell = ToolsCell(
+            self.frame,
+            "settings2.png",
+            "Settings",
+            "Preferences",
+            self.open_fileorganizer,
+        )
         self.settingsCell.grid(row=1, column=2, padx=5, pady=5, sticky="news")
+
+    def open_fileorganizer(self):
+        if self.fileorganizer is None or not self.fileorganizer.winfo_exists():
+            self.fileorganizer = OrganizerWindow(self.window)
+        else:
+            self.fileorganizer.focus()
