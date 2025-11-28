@@ -5,6 +5,10 @@ import snapshots
 import tools
 import footer
 
+# Change default theme
+default_ctk_font = customtkinter.ThemeManager.theme["CTkFont"]
+default_ctk_font["family"] = "Helvetica"
+
 
 class App(customtkinter.CTk):
     def __init__(self):
@@ -19,7 +23,7 @@ class App(customtkinter.CTk):
 
         self.greatings = greatings.GreatingsFrame(self)
         self.greatings.grid(row=1, column=0, padx=10, pady=(10, 0), sticky="nsew")
-        
+
         self.snapshots = snapshots.SnapshotsFrame(self)
         self.snapshots.grid(row=2, column=0, padx=10, pady=(10, 0), sticky="nsew")
         self.snapshots.sheduleUpdates(self)

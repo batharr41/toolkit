@@ -2,6 +2,8 @@ import customtkinter
 from PIL import Image
 from orginizer.organize_frame import OrganizerWindow
 from cleaner.cleaner_frame import CleanerWindow
+from monitor.monitor_frame import MonitorWindow
+
 
 class ToolsCell(customtkinter.CTkFrame):
     def __init__(self, master, filename, value, subValue, command):
@@ -53,6 +55,7 @@ class ToolsFrame(customtkinter.CTkFrame):
     window: customtkinter.CTk
     fileorganizer: customtkinter.CTkToplevel
     cleaner: customtkinter.CTkToplevel
+    monitor: customtkinter.CTkToplevel
 
     def __init__(self, window):
         super().__init__(
@@ -102,7 +105,7 @@ class ToolsFrame(customtkinter.CTkFrame):
             "monitor.png",
             "System Monitor",
             "CPU,RAM,processes",
-            self.open_fileorganizer,
+            self.open_monitor,
         )
         self.monitorCell.grid(row=0, column=2, padx=5, pady=5, sticky="news")
 
@@ -132,10 +135,11 @@ class ToolsFrame(customtkinter.CTkFrame):
             self.open_fileorganizer,
         )
         self.settingsCell.grid(row=1, column=2, padx=5, pady=5, sticky="news")
-        
+
         # popups
         self.fileorganizer = None
         self.cleaner = None
+        self.monitor = None
 
     def open_fileorganizer(self, ev):
         if self.fileorganizer is None or not self.fileorganizer.winfo_exists():
@@ -148,3 +152,9 @@ class ToolsFrame(customtkinter.CTkFrame):
             self.cleaner = CleanerWindow(self.window)
         else:
             self.cleaner.focus()
+
+    def open_monitor(self, ev):
+        if self.monitor is None or not self.monitor.winfo_exists():
+            self.monitor = MonitorWindow(self.window)
+        else:
+            self.monitor.focus()
