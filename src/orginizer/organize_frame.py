@@ -1,43 +1,9 @@
 import customtkinter as ctk
 from .tools_header import ToolsHeader
-
-class FoldersFrame(ctk.CTkFrame):
-    def __init__(self, master):
-        super().__init__(master)
-
-        # Folders to Organize Section ---
-        self.folders_label = ctk.CTkLabel(
-            self,
-            text="Folders to Organize",
-            font=ctk.CTkFont(size=18, weight="bold"),
-        )
-        self.folders_label.grid(row=1, column=0, padx=20, pady=(10, 5), sticky="w")
-
-        # Checkboxes (using instance variables for easy access/state checking)
-        self.checkboxs_frame = ctk.CTkFrame(self, fg_color="transparent")
-        self.checkboxs_frame.grid(row=2, column=0, padx=20, pady=(0, 5), sticky="w")
-
-        self.folders = ["Downloads", "Documents", "Desktop"]
-        self.checks = []
-        self.vars = []
-        for fold in self.folders:
-            var = ctk.StringVar(value="on")
-            check = ctk.CTkCheckBox(
-                self.checkboxs_frame,
-                text=fold,
-                variable=var,
-                onvalue="on",
-                offvalue="off",
-            )
-            check.pack(padx=20, pady=(10, 5))
-            self.checks.append(check)
-            self.vars.append(var)
-
-        # Add Folder Button
-        self.add_folder_button = ctk.CTkButton(self, text="Add Folder")
-        self.add_folder_button.grid(
-            row=3, column=0, padx=20, pady=(10, 20), sticky="we"
-        )
+from .folders_framer import FoldersFrame
+from logic import utils
+from platformdirs import user_documents_dir, user_downloads_dir, user_desktop_dir
+from logic.organize_helper import run_organize
 
 
 class FileOrganizerFrame(ctk.CTkFrame):
@@ -50,7 +16,7 @@ class FileOrganizerFrame(ctk.CTkFrame):
         self.grid_rowconfigure(6, weight=1)  # Row for the Logs textbox should expand
 
         # --- 1. Title ---
-        self.header = ToolsHeader(self,"file.png","File Organizer")
+        self.header = ToolsHeader(self, "file.png", "File Organizer")
         self.header.grid(row=0, column=0, padx=20, pady=(0, 10), sticky="n")
 
         # --- 1. Folder Contains
@@ -65,7 +31,7 @@ class FileOrganizerFrame(ctk.CTkFrame):
 
         # ComboBox for Search Depth
         depth_options = ["1 level", "2 levels", "3 levels"]
-        self.depth_var = ctk.StringVar(value="2 levels")  # Default value
+        self.depth_var = ctk.StringVar(value="1 level")  # Default value
         self.depth_combo = ctk.CTkComboBox(
             self, values=depth_options, variable=self.depth_var, state="readonly"
         )
@@ -73,7 +39,11 @@ class FileOrganizerFrame(ctk.CTkFrame):
 
         # --- 4. Start Button ---
         self.start_button = ctk.CTkButton(
-            self, text="Start", fg_color="green", hover_color="darkgreen"
+            self,
+            text="Start",
+            fg_color="green",
+            hover_color="darkgreen",
+            command=self.on_organize,
         )
         self.start_button.grid(row=4, column=0, padx=20, pady=(10, 20), sticky="ew")
 
@@ -89,12 +59,35 @@ class FileOrganizerFrame(ctk.CTkFrame):
         self.logs_textbox = ctk.CTkTextbox(self, height=100)
         self.logs_textbox.grid(row=6, column=0, padx=20, pady=(5, 20), sticky="nsew")
 
+    def addLog(self, log):
+        info = self.logs_textbox.get("1.0", "end")
+        info += f"\n{log}"
+        self.logs_textbox.delete("1.0", "end")
+        self.logs_textbox.insert("1.0", info)
+
+    def on_organize(self):
+        self.logs_textbox.delete("1.0", "end")
+
+        folders = [f.lower() for f in self.folders.get_folders()]
+        depth = self.depth_var.get()
+        depth = utils.tryParseInt(depth.split(" ")[0], 1)
+        root_dirs = []
+        if "downloads" in folders:
+            root_dirs.append(user_downloads_dir())
+        if "documents" in folders:
+            root_dirs.append(user_documents_dir())
+        if "desktop" in folders:
+            root_dirs.append(user_desktop_dir())
+        print("on organize", folders, depth, root_dirs)
+
+        run_organize(root_dirs, depth, lambda x: self.addLog(x))
+
 
 class OrganizerWindow(ctk.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.title("File Organizer")
-        self.geometry("400x700")
+        self.geometry("500x700")
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
