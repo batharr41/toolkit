@@ -3,7 +3,7 @@ from .tools_header import ToolsHeader
 from .folders_framer import FoldersFrame
 from logic import utils
 from platformdirs import user_documents_dir, user_downloads_dir, user_desktop_dir
-from logic.organize_helper import run_organize
+from .organize_helper import run_organize
 
 
 class FileOrganizerFrame(ctk.CTkFrame):
@@ -64,6 +64,7 @@ class FileOrganizerFrame(ctk.CTkFrame):
         info += f"\n{log}"
         self.logs_textbox.delete("1.0", "end")
         self.logs_textbox.insert("1.0", info)
+        print(log)
 
     def on_organize(self):
         self.logs_textbox.delete("1.0", "end")

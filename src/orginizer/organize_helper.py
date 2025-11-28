@@ -1,7 +1,6 @@
 from pathlib import Path
 from typing import List, Tuple
-from . import config
-import random
+from logic import config
 import shutil
 
 
@@ -61,9 +60,8 @@ def run_organize(root_dirs: list[str], depth: int, logger):
         grouped_paths = group_files_by_extension(paths)
         logger(f"Found {len(paths)} files:")
         move_grouped_files(dir, grouped_paths)
-    
+
     logger(f"Operation complete!")
-    
 
 
 if __name__ == "__main__":

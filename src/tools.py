@@ -1,6 +1,7 @@
 import customtkinter
 from PIL import Image
 from orginizer.organize_frame import OrganizerWindow
+from cleaner.cleaner_frame import CleanerWindow
 
 class ToolsCell(customtkinter.CTkFrame):
     def __init__(self, master, filename, value, subValue, command):
@@ -51,6 +52,7 @@ class ToolsFrame(customtkinter.CTkFrame):
 
     window: customtkinter.CTk
     fileorganizer: customtkinter.CTkToplevel
+    cleaner: customtkinter.CTkToplevel
 
     def __init__(self, window):
         super().__init__(
@@ -91,7 +93,7 @@ class ToolsFrame(customtkinter.CTkFrame):
             "cleaner.png",
             "Cleaner",
             "Clear temp/cache",
-            self.open_fileorganizer,
+            self.open_cleaner,
         )
         self.cleanerCell.grid(row=0, column=1, padx=5, pady=5, sticky="news")
 
@@ -133,9 +135,16 @@ class ToolsFrame(customtkinter.CTkFrame):
         
         # popups
         self.fileorganizer = None
+        self.cleaner = None
 
     def open_fileorganizer(self, ev):
         if self.fileorganizer is None or not self.fileorganizer.winfo_exists():
             self.fileorganizer = OrganizerWindow(self.window)
         else:
             self.fileorganizer.focus()
+
+    def open_cleaner(self, ev):
+        if self.cleaner is None or not self.cleaner.winfo_exists():
+            self.cleaner = CleanerWindow(self.window)
+        else:
+            self.cleaner.focus()
