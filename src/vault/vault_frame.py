@@ -4,6 +4,7 @@ import os
 from logic import utils
 from orginizer.tools_header import ToolsHeader
 from .vault_helper import VaultHelper
+from ..logic.view_file_helper import open_file_with_default_viewer
 
 ICON_SIZE = (20, 20)
 get_img = lambda x: ctk.CTkImage(Image.open(os.path.join("assets", x)), size=ICON_SIZE)
@@ -166,10 +167,12 @@ class VaultFrame(ctk.CTkFrame):
 
     def restore_at(self, pos: int):
         file = self.vault.file_records[pos]
-        self.vault.decode_and_save_file(file["name"])
+        outputpath = self.vault.decode_and_save_file(file["name"])
         self.info_lbl.configure(
             text=f"Restored {file['name']} to `Downloads/{file['name']}`"
         )
+        if outputpath:
+            open_file_with_default_viewer(outputpath)
 
     def add_file_command(self):
         filepath = utils.open_file_chooser()
