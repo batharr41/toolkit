@@ -1,4 +1,5 @@
 import os
+import platform
 
 
 def getUserName():
@@ -14,3 +15,7 @@ def tryParseInt(no: str, defVal):
         return int(no)
     except:
         return defVal
+
+
+def is_linux():
+    return platform.system() == "Linux"

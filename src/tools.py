@@ -3,6 +3,7 @@ from PIL import Image
 from orginizer.organize_frame import OrganizerWindow
 from cleaner.cleaner_frame import CleanerWindow
 from monitor.monitor_frame import MonitorWindow
+from stats.stats_frame import StatsCenterWindow
 
 
 class ToolsCell(customtkinter.CTkFrame):
@@ -56,6 +57,7 @@ class ToolsFrame(customtkinter.CTkFrame):
     fileorganizer: customtkinter.CTkToplevel
     cleaner: customtkinter.CTkToplevel
     monitor: customtkinter.CTkToplevel
+    stats: customtkinter.CTkToplevel
 
     def __init__(self, window):
         super().__init__(
@@ -123,7 +125,7 @@ class ToolsFrame(customtkinter.CTkFrame):
             "stats.png",
             "Stats Center",
             "Network,weather,etc",
-            self.open_fileorganizer,
+            self.open_stats,
         )
         self.statsCell.grid(row=1, column=1, padx=5, pady=5, sticky="news")
 
@@ -140,6 +142,7 @@ class ToolsFrame(customtkinter.CTkFrame):
         self.fileorganizer = None
         self.cleaner = None
         self.monitor = None
+        self.stats = None
 
     def open_fileorganizer(self, ev):
         if self.fileorganizer is None or not self.fileorganizer.winfo_exists():
@@ -158,3 +161,9 @@ class ToolsFrame(customtkinter.CTkFrame):
             self.monitor = MonitorWindow(self.window)
         else:
             self.monitor.focus()
+
+    def open_stats(self, ev):
+        if self.stats is None or not self.stats.winfo_exists():
+            self.stats = StatsCenterWindow(self.window)
+        else:
+            self.stats.focus()
