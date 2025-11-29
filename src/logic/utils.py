@@ -25,9 +25,9 @@ def is_linux():
 def open_file_chooser():
     """Opens a dialog to select a single file for reading."""
     filetypes = (
+        ("All files", "*.*"),
         ("Text files", "*.txt"),
         ("Python files", "*.py"),
-        ("All files", "*.*"),
     )
 
     # Returns the full path to the selected file, or an empty string if cancelled.

@@ -1,6 +1,9 @@
 import customtkinter as ctk
 from PIL import Image
 import os
+from logic import utils
+from orginizer.tools_header import ToolsHeader
+from .vault_helper import VaultHelper
 
 ICON_SIZE = (20, 20)
 get_img = lambda x: ctk.CTkImage(Image.open(os.path.join("assets", x)), size=ICON_SIZE)
@@ -13,6 +16,7 @@ icon_map = {
     "add": get_img("add_icon.png"),
     "file": get_img("file_icon.png"),
     "delete": get_img("delete_icon.png"),
+    "restore": get_img("restore_icon.png"),
 }
 
 
@@ -27,21 +31,13 @@ class VaultFrame(ctk.CTkFrame):
             {"name": "video.mp4", "type": "video"},
             {"name": "document.pdf", "type": "document"},
             {"name": "audio.mp3", "type": "audio"},
-            {
-                "name": "another_file.zip",
-                "type": "document",
-            },  # Additional item for scroll test
-            {
-                "name": "vacation.png",
-                "type": "photo",
-            },  # Additional item for scroll test
+            {"name": "another_file.zip", "type": "document"},
+            {"name": "vacation.png", "type": "photo"},
         ]
 
         # --- 1. Title ---
-        self.title_label = ctk.CTkLabel(
-            self, text="Vault", font=ctk.CTkFont(size=24, weight="bold")
-        )
-        self.title_label.grid(row=0, column=0, padx=20, pady=(20, 10), sticky="n")
+        self.header = ToolsHeader(self, "vault.png", "Vault")
+        self.header.grid(row=0, column=0, padx=20, pady=(20, 10), sticky="n")
 
         # --- 2. Action Buttons ---
         self.button_frame = ctk.CTkFrame(self, fg_color="transparent")
@@ -59,10 +55,10 @@ class VaultFrame(ctk.CTkFrame):
 
         self.help_button = ctk.CTkButton(
             self.button_frame,
-            text=" Help",
-            image=icon_map["help"],
+            text=" Delete All",
+            image=icon_map["delete"],
             compound="left",
-            command=self.help_command,
+            command=self.delete_all,
             fg_color=(
                 "gray70",
                 "gray30",
@@ -84,7 +80,17 @@ class VaultFrame(ctk.CTkFrame):
         self.scroll_frame.grid(row=3, column=0, padx=20, pady=(0, 20), sticky="nsew")
         self.scroll_frame.grid_columnconfigure(0, weight=1)
 
+        self.vault = VaultHelper("vault01", False)
         self.rows = []
+        self.files = self.vault.get_files()
+        self._render_file_list()
+
+        # --- 5. Info label ---
+        self.info_lbl = ctk.CTkLabel(self, text="--")
+        self.info_lbl.grid(row=4, column=0, padx=20, pady=(0, 20), sticky="we")
+
+    def update_list(self):
+        self.files = self.vault.get_files()
         self._render_file_list()
 
     def delete_rows(self):
@@ -93,7 +99,9 @@ class VaultFrame(ctk.CTkFrame):
                 item.destroy()
 
     def _render_file_list(self):
+        self.delete_rows()
         """Dynamically creates the list of files in the scrollable frame."""
+        print("files:", [x["name"] for x in self.files])
         for i, file in enumerate(self.files):
             # Row frame
             frame = ctk.CTkFrame(self.scroll_frame)
@@ -134,34 +142,60 @@ class VaultFrame(ctk.CTkFrame):
                 width=50,
                 fg_color="transparent",
             )
-
             delete_but.grid(row=0, column=1, sticky="ew")
-            delete_but.bind(
-                "<Button-1>", lambda event, pos=i: print("Clicked but:" + str(pos))
+            delete_but.bind("<Button-1>", lambda event, pos=i: self.delete_at(pos))
+
+            # restore button
+            restore_but = ctk.CTkButton(
+                frame,
+                text="",
+                image=icon_map["restore"],
+                width=50,
+                fg_color="transparent",
             )
+            restore_but.grid(row=0, column=2, sticky="ew")
+            restore_but.bind("<Button-1>", lambda event, pos=i: self.restore_at(pos))
 
-            self.rows.append((frame, file_label, delete_but))
-        
+            self.rows.append((frame, file_label, delete_but, restore_but))
+
+    def delete_at(self, pos: int):
+        file = self.vault.file_records[pos]
+        self.vault.delete_at(pos)
+        self.update_list()
+        self.info_lbl.configure(text=f"Removed {file['name']}")
+
+    def restore_at(self, pos: int):
+        file = self.vault.file_records[pos]
+        self.vault.decode_and_save_file(file["name"])
+        self.info_lbl.configure(
+            text=f"Restored {file['name']} to `Downloads/{file['name']}`"
+        )
+
     def add_file_command(self):
-        print("Add File button clicked.")
-        # Logic to open file dialog and add file...
+        filepath = utils.open_file_chooser()
+        self.vault.add_file(filepath)
+        res = self.update_list()
+        self.info_lbl.configure(
+            text=f"Added {filepath}" if res else f"Failed to add {filepath}"
+        )
 
-    def help_command(self):
-        print("Help button clicked.")
-        # Logic to display help/documentation...
+    def delete_all(self):
+        self.vault.delete_all()
+        self.update_list()
+        self.info_lbl.configure(text="Deleted All Files")
 
 
 class VaultWindow(ctk.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.title("File Organizer")
+        self.title("Vault")
         self.geometry("550x600")
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
         self.frame = VaultFrame(self)
-        self.frame.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
+        self.frame.grid(row=0, column=0, padx=0, pady=0, sticky="nsew")
 
 
 # --- Example Usage (Main Application Loop) ---

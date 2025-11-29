@@ -4,6 +4,7 @@ from orginizer.organize_frame import OrganizerWindow
 from cleaner.cleaner_frame import CleanerWindow
 from monitor.monitor_frame import MonitorWindow
 from stats.stats_frame import StatsCenterWindow
+from vault.vault_frame import VaultWindow
 
 
 class ToolsCell(customtkinter.CTkFrame):
@@ -58,6 +59,7 @@ class ToolsFrame(customtkinter.CTkFrame):
     cleaner: customtkinter.CTkToplevel
     monitor: customtkinter.CTkToplevel
     stats: customtkinter.CTkToplevel
+    vault: customtkinter.CTkToplevel
 
     def __init__(self, window):
         super().__init__(
@@ -116,7 +118,7 @@ class ToolsFrame(customtkinter.CTkFrame):
             "vault.png",
             "Vault",
             "Store files safely",
-            self.open_fileorganizer,
+            self.open_vault,
         )
         self.vaultCell.grid(row=1, column=0, padx=5, pady=5, sticky="news")
 
@@ -143,6 +145,7 @@ class ToolsFrame(customtkinter.CTkFrame):
         self.cleaner = None
         self.monitor = None
         self.stats = None
+        self.vault = None
 
     def open_fileorganizer(self, ev):
         if self.fileorganizer is None or not self.fileorganizer.winfo_exists():
@@ -167,3 +170,9 @@ class ToolsFrame(customtkinter.CTkFrame):
             self.stats = StatsCenterWindow(self.window)
         else:
             self.stats.focus()
+
+    def open_vault(self, ev):
+        if self.vault is None or not self.vault.winfo_exists():
+            self.vault = VaultWindow(self.window)
+        else:
+            self.vault.focus()
