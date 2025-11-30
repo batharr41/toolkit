@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import List, Tuple
 from logic import config
 import shutil
+import os
 
 
 def extract_files_from_folder(
@@ -53,6 +54,43 @@ def move_grouped_files(base_path: Path, groups: list[tuple[str, str]]):
             print(f"❌ ERROR moving {file_path_str}: {e}")
 
 
+def delete_empty_folders(dir_path: str):
+    if not os.path.isdir(dir_path):
+        print(f"Error: '{dir_path}' is not a valid directory.")
+        return
+
+    childs_count = {}
+    print(f"Scanning directory: {dir_path}")
+    for root, dirnames, filenames in os.walk(dir_path, topdown=False):
+        num_children = len(dirnames) + len(filenames)
+        childs_count[root] = num_children
+
+    print("\n--- Folder Child Count Map ---")
+    for folder, count in childs_count.items():
+        print(f"Folder: {folder} | Children: {count}")
+    print("------------------------------\n")
+
+    deleted_count = 0
+    print("Attempting to delete empty folders...")
+    for folder, count in childs_count.items():
+        if count == 0 and folder != dir_path:
+            try:
+                os.rmdir(folder)
+                print(f"🗑️ Successfully deleted empty folder: {folder}")
+                deleted_count += 1
+
+                parent_dir = os.path.dirname(folder)
+                if parent_dir in childs_count:
+                    childs_count[parent_dir] -= 1
+
+            except OSError as e:
+                print(f"⚠️ Error deleting folder {folder}: {e}")
+
+    print(f"\n--- Deletion Summary ---")
+    print(f"Total empty folders deleted: **{deleted_count}**")
+    print("--------------------------")
+
+
 def run_organize(root_dirs: list[str], depth: int, logger):
     for dir in root_dirs:
         logger(f"Extracting files from: {dir}")
@@ -60,12 +98,12 @@ def run_organize(root_dirs: list[str], depth: int, logger):
         grouped_paths = group_files_by_extension(paths)
         logger(f"Found {len(paths)} files:")
         move_grouped_files(dir, grouped_paths)
+        delete_empty_folders(dir)
 
     logger(f"Operation complete!")
 
 
-if __name__ == "__main__":
+def main():
     roots = ["/home/me/Downloads", "/home/me/Documents", "/home/me/Desktop"]
     roots = ["/home/me/Downloads"]
-
     run_organize(roots, 1, lambda x: print(x))
