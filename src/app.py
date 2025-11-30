@@ -4,6 +4,7 @@ import greatings
 import snapshots
 import tools
 import footer
+from about.about_frame import AboutWindow
 
 # Change default theme
 default_ctk_font = customtkinter.ThemeManager.theme["CTkFont"]
@@ -19,6 +20,7 @@ class App(customtkinter.CTk):
         self.grid_columnconfigure(0, weight=1)
 
         self.header = header.HeaderFrame(self)
+        self.header.window = self
         self.header.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="nsew")
 
         self.greatings = greatings.GreatingsFrame(self)
@@ -34,5 +36,8 @@ class App(customtkinter.CTk):
         self.footer = footer.FooterFrame(self, version="1.0.0")
         self.footer.grid(row=4, column=0, padx=10, pady=(10, 0), sticky="nsew")
 
-    def button_callback(self):
-        print("button pressed")
+    def open_about(self, ev):
+        if self.about is None or not self.about.winfo_exists():
+            self.about = AboutWindow(self.window)
+        else:
+            self.about.focus()

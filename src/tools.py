@@ -5,6 +5,7 @@ from cleaner.cleaner_frame import CleanerWindow
 from monitor.monitor_frame import MonitorWindow
 from stats.stats_frame import StatsCenterWindow
 from vault.vault_frame import VaultWindow
+from about.about_frame import AboutWindow
 
 
 class ToolsCell(customtkinter.CTkFrame):
@@ -60,6 +61,7 @@ class ToolsFrame(customtkinter.CTkFrame):
     monitor: customtkinter.CTkToplevel
     stats: customtkinter.CTkToplevel
     vault: customtkinter.CTkToplevel
+    about: customtkinter.CTkToplevel
 
     def __init__(self, window):
         super().__init__(
@@ -134,9 +136,9 @@ class ToolsFrame(customtkinter.CTkFrame):
         self.settingsCell = ToolsCell(
             self.frame,
             "settings2.png",
-            "Settings",
-            "Preferences",
-            self.open_fileorganizer,
+            "About",
+            "App Information",
+            self.open_about,
         )
         self.settingsCell.grid(row=1, column=2, padx=5, pady=5, sticky="news")
 
@@ -146,6 +148,7 @@ class ToolsFrame(customtkinter.CTkFrame):
         self.monitor = None
         self.stats = None
         self.vault = None
+        self.about = None
 
     def open_fileorganizer(self, ev):
         if self.fileorganizer is None or not self.fileorganizer.winfo_exists():
@@ -176,3 +179,9 @@ class ToolsFrame(customtkinter.CTkFrame):
             self.vault = VaultWindow(self.window)
         else:
             self.vault.focus()
+
+    def open_about(self, ev):
+        if self.about is None or not self.about.winfo_exists():
+            self.about = AboutWindow(self.window)
+        else:
+            self.about.focus()

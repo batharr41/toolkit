@@ -4,7 +4,7 @@ import os
 from logic import utils
 from orginizer.tools_header import ToolsHeader
 from .vault_helper import VaultHelper
-from ..logic.view_file_helper import open_file_with_default_viewer
+from logic.view_file_helper import open_file_with_default_viewer
 
 ICON_SIZE = (20, 20)
 get_img = lambda x: ctk.CTkImage(Image.open(os.path.join("assets", x)), size=ICON_SIZE)
