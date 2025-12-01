@@ -17,9 +17,17 @@ The main landing page provides an immediate status report on critical system com
 * **System Snapshots:** A quick, static view of current CPU, RAM, Disk usage, and Network activity.  
 * **Real-Time Process Activity:** Lists the Top Processes currently running, showing real-time metrics for Process Name, PID, CPU (%), and RAM (%). **This data auto-refreshes rapidly to ensure accuracy.**
 
+<p align="center">
+  <img src="screenshots/dashboard.png" alt="Toolkit Dashboard Screenshot" width="700"/>
+</p>
+
 ### **2\. System Monitor**
 
 The dedicated monitoring page provides a deep dive into active processes and resource consumption, offering a comprehensive, rapidly updating view of system health.
+
+<p align="center">
+  <img src="screenshots/monitor.png" alt="Toolkit Dashboard Screenshot" width="700"/>
+</p>
 
 ### **3\. Stats Center**
 
@@ -28,6 +36,10 @@ This module focuses on network and geographic data, providing utility informatio
 * **Network Status:** Displays the public IP Address, Location (City, Country), and Internet Service Provider (ISP).  
 * **Weather Data:** Shows the current local temperature and a 5-day forecast.  
 * **Auto-Refresh:** Like the System Monitor, **all data on this page refreshes rapidly** to ensure the most current network and weather information is displayed.
+
+<p align="center">
+  <img src="screenshots/stats.png" alt="Toolkit Dashboard Screenshot" width="700"/>
+</p>
 
 ### **4\. File Cleaner**
 
@@ -38,6 +50,10 @@ A dedicated tool for system hygiene and freeing up disk space.
   * Browser Cache  
   * Large & Old Files
 
+<p align="center">
+  <img src="screenshots/cleaner.png" alt="Toolkit Dashboard Screenshot" width="700"/>
+</p>
+
 ### **5\. File Organizer**
 
 Helps maintain a tidy file system by automatically sorting files into designated directories.
@@ -45,11 +61,20 @@ Helps maintain a tidy file system by automatically sorting files into designated
 * **Folders to Organize:** Users can specify which folders to target, with common defaults like Downloads, Documents, and Desktop provided.  
 * **Search Depth:** Configurable depth to control how deep the organizer looks into subdirectories.
 
+<p align="center">
+  <img src="screenshots/organizer.png" alt="Toolkit Dashboard Screenshot" width="700"/>
+</p>
+
 ### **6\. Vault**
 
 A secure section designed for storing and managing sensitive documents and files.
 
 * **Secure Storage:** Allows users to add and manage files within a protected area.
+
+
+<p align="center">
+  <img src="screenshots/vault.png" alt="Toolkit Dashboard Screenshot" width="700"/>
+</p>
 
 ## **🛠️ Skills and Tools Used**
 
