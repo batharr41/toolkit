@@ -130,4 +130,4 @@ python3 main\_toolkit.py \# Replace main\_toolkit.py with your actual entry file
 4. **Utilities:** Click on **File Cleaner** or **File Organizer**, configure your settings (e.g., selection checkboxes, folder paths), and click **Start** (or the equivalent action button) to execute the task.
 
 
-*Author: Bather Bilal* *Release Date: December 2025*
+*Author: Bilal Athar * *Release Date: December 2025*
